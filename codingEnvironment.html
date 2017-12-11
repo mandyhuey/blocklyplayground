@@ -78,6 +78,17 @@
                     <td>
                         <img src="images/cat3_numbered.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
                     </td>
+                  </tr>
+                  <tr>
+                    <td>
+                        <img src="images/minion1.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/minion2.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
+                    <td>
+                        <img src="images/minion3.png" style="margin-left:5px;margin-top:5px;outline-style: solid;outline-width: 1px;height:180px;" />
+                    </td>
                 </tr>
             </table>
         </div>
@@ -97,8 +108,12 @@
         <block type="whenrunclicked"></block>
         <block type="clearscreen"></block>
     </category>
-    <category name="cats" colour="175">
+    <category name="Actions" colour="330">
+      <block type="say"></block>
+    </category>
+    <category name = "Characters" colour="175">
         <block type="catpose"></block>
+        <block type="minionpose"></block>
     </category>
 
     <sep></sep>
@@ -193,14 +208,34 @@
         y: 0
     });
 
+    /*Defining the minion*/
+     var minionImage = new Image();
+     minionImage.src = "images/minion1.png";
+
+      var minion1 = sprite({
+         context: canvas.getContext("2d"),
+         width: 500,
+         height: 500,
+         image: minionImage,
+         x: 150,
+         y: 0
+     });
+
     /******************
-     * Show the cat *
+     * Show the cat & minion*
      ******************/
     cat1.render();
+    minion1.render();
 
-    var indexToArrays = 0;
-    var numOfInstructions = 0;
-    var arrayOfPoses = [];
+
+    var indexToArrays      = 0;
+    var numOfInstructions  = 0;
+  //  var arrayOfPoses = [];
+
+    var catArrayOfPoses    = [];
+    var minionArrayOfPoses = [];
+    var wordArray          = [];
+
 
     /**************************************
      * RUN and STOP buttons on the canvas *
@@ -227,16 +262,37 @@
         window.requestAnimationFrame(animate);
     }
 
-    function updatePose(poseNum){
-        arrayOfPoses.push(poseNum);
+    function updatePose(poseNum, characIndex){
+      //cat is array 0
+      if(characIndex == 1){
+        catArrayOfPoses.push(poseNum);
         numOfInstructions++;
+      }
+      //minions is array 1
+      else if(characIndex == 2){
+        minionArrayOfPoses.push(poseNum);
+        numOfInstructions++;
+      }
+    }
+
+    function updateSayings(word){
+      wordArray.push(word);
+      numOfInstructions++;
     }
 
     function animate() {
         setTimeout(function() {
-            setcatImage(arrayOfPoses[indexToArrays]);
+          //if(catArrayOfPoses[indexToArrays] != 0){
+            setcatImage(catArrayOfPoses[indexToArrays]);
+          //}
+          //if(minionArrayOfPoses[indexToArrays] != 0){
+            setMinionImage(minionArrayOfPoses[indexToArrays]);
+          //}
+          //if(wordArray[indexToArrays] != 0){
+          setWords(wordArray[indexToArrays]);
+          //}
+          indexToArrays++;
 
-            indexToArrays++;
 
             if (indexToArrays == numOfInstructions)
                 indexToArrays = 0;
@@ -254,6 +310,8 @@
     function resetCanvas(){
         clearCanvas();
         setcatImage(1);
+        setMinionImage(1);
+        setWords(1);
     }
 
     /*************************************
@@ -281,7 +339,30 @@
         ctx.save();
         ctx.restore();
     }
+    /*****************************
+     * Changing the minion's Pose *
+     *****************************/
+    function setMinionImage(minionIndex){
+        if(!minionIndex)
+          minionIndex = 1;
+        clearCanvas();
+        minionImage.src = "images/minion"+minionIndex+".png";
+        ctx.drawImage(minion1.image, minion1.x, minion1.y);
+        ctx.save();
+        ctx.restore();
+    }
 
+    /*****************************
+     * Changing the words block*
+     *****************************/
+    function setWords(displayWord){
+        //clearCanvas();
+        console.log(displayWord);
+        ctx.font = "30px Comic Sans MS";
+        ctx.fillText(displayWord, canvas.width/2, canvas.height-80);
+        ctx.save();
+        ctx.restore();
+    }
     /***********************
      * Clearing the Canvas *
      ***********************/
